@@ -41,7 +41,7 @@ Fetches a single Dokploy compose stack by its ID.
 - `custom_git_url` (String) Custom Git repository URL.
 - `description` (String) Description of the compose stack.
 - `enable_submodules` (Boolean) Whether Git submodules support is enabled.
-- `env` (String) Environment variables in KEY=VALUE format.
+- `env` (String, Sensitive) Environment variables in KEY=VALUE format.
 - `environment_id` (String) The environment ID this compose stack belongs to.
 - `gitea_branch` (String) Gitea branch to deploy from.
 - `gitea_build_path` (String) Build path within the Gitea repository.

@@ -260,7 +260,7 @@ resource "dokploy_compose" "server_specific" {
 - `deploy_on_create` (Boolean) Trigger a deployment after creating the compose stack.
 - `description` (String) A description of the compose stack.
 - `enable_submodules` (Boolean) Enable Git submodules support.
-- `env` (String) Environment variables in KEY=VALUE format, one per line.
+- `env` (String, Sensitive) Environment variables in KEY=VALUE format, one per line.
 - `gitea_branch` (String) Gitea branch to deploy from.
 - `gitea_build_path` (String) Build path within the Gitea repository.
 - `gitea_id` (String) Gitea integration ID. Required for Gitea source type.

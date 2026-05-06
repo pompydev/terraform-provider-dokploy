@@ -305,7 +305,7 @@ func (r *BackupResource) Read(ctx context.Context, req resource.ReadRequest, res
 	}
 
 	// Read metadata if present
-	if backup.Metadata != nil && len(backup.Metadata) > 0 {
+	if len(backup.Metadata) > 0 {
 		state.Metadata, diags = types.MapValueFrom(ctx, types.StringType, backup.Metadata)
 		resp.Diagnostics.Append(diags...)
 	} else {

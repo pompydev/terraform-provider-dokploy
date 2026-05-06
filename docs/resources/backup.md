@@ -42,6 +42,7 @@ resource "dokploy_backup" "daily" {
 - `database_type` (String) Type of database: postgres, mysql, mariadb, or mongo. Required when backup_type is 'database'.
 - `enabled` (Boolean) Whether the backup schedule is enabled.
 - `keep_latest_count` (Number) Number of recent backups to keep (older ones are deleted).
+- `metadata` (Map of String) Metadata for the backup configuration as key-value pairs.
 - `service_name` (String) Name of the service within the compose to backup. Required when backup_type is 'compose'.
 
 ### Read-Only
