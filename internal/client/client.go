@@ -711,6 +711,43 @@ func (c *DokployClient) DeleteEnvironment(id string) error {
 
 // --- Application ---
 
+// StringOrStringSlice round-trips a value that Dokploy may return as either a
+// JSON string or a JSON array of strings. Dokploy's application.one returns
+// `args` as a string when the user wrote a single command line, but as an
+// array when they split command/args (common for celery worker/beat). The
+// provider only ever needs to write a single string back, so MarshalJSON
+// always emits a string; UnmarshalJSON tolerates both shapes (joining array
+// elements with single spaces) plus null and the empty string.
+type StringOrStringSlice string
+
+func (s *StringOrStringSlice) UnmarshalJSON(data []byte) error {
+	if len(data) == 0 || string(data) == "null" {
+		*s = ""
+		return nil
+	}
+	if data[0] == '"' {
+		var str string
+		if err := json.Unmarshal(data, &str); err != nil {
+			return err
+		}
+		*s = StringOrStringSlice(str)
+		return nil
+	}
+	if data[0] == '[' {
+		var parts []string
+		if err := json.Unmarshal(data, &parts); err != nil {
+			return err
+		}
+		*s = StringOrStringSlice(strings.Join(parts, " "))
+		return nil
+	}
+	return fmt.Errorf("StringOrStringSlice: unexpected JSON token %q", string(data))
+}
+
+func (s StringOrStringSlice) MarshalJSON() ([]byte, error) {
+	return json.Marshal(string(s))
+}
+
 type Application struct {
 	// Core identifiers
 	ID            string `json:"applicationId"`
@@ -730,8 +767,8 @@ type Application struct {
 	CustomGitSSHKeyId  string `json:"customGitSSHKeyId"`
 	CustomGitBuildPath string `json:"customGitBuildPath"`
 	EnableSubmodules   bool   `json:"enableSubmodules"`
-	WatchPaths         string `json:"watchPaths"` // Stored as JSON array string
-	CleanCache         bool   `json:"cleanCache"`
+	WatchPaths         []string `json:"watchPaths"`
+	CleanCache         bool     `json:"cleanCache"`
 
 	// GitHub provider settings (application.saveGithubProvider)
 	Repository  string `json:"repository"`
@@ -797,9 +834,9 @@ type Application struct {
 	MemoryReservation json.Number `json:"memoryReservation"`
 	CpuLimit          json.Number `json:"cpuLimit"`
 	CpuReservation    json.Number `json:"cpuReservation"`
-	Command           string      `json:"command"`
-	Args              string      `json:"args"`
-	EntryPoint        string      `json:"entrypoint"`
+	Command           string              `json:"command"`
+	Args              StringOrStringSlice `json:"args"`
+	EntryPoint        string              `json:"entrypoint"`
 
 	// Docker Swarm configuration
 	HealthCheckSwarm     map[string]interface{}   `json:"healthCheckSwarm"`
@@ -1122,7 +1159,10 @@ func (c *DokployClient) ListApplicationsByEnvironment(environmentID string) ([]A
 // SaveBuildType configures the build type settings for an application.
 // Corresponds to application.saveBuildType endpoint.
 func (c *DokployClient) SaveBuildType(appID string, buildType string, dockerfile string, dockerContextPath string, dockerBuildStage string, publishDirectory string) error {
-	// The API requires all these fields to be present as strings (even if empty)
+	// The API requires all these fields to be present as strings (even if
+	// empty). Recent Dokploy releases tightened the Zod schema so
+	// herokuVersion and railpackVersion are nonoptional; send them as empty
+	// strings (the UI's default for an app that hasn't pinned a version).
 	payload := map[string]interface{}{
 		"applicationId":     appID,
 		"buildType":         buildType,
@@ -1130,6 +1170,8 @@ func (c *DokployClient) SaveBuildType(appID string, buildType string, dockerfile
 		"dockerContextPath": dockerContextPath,
 		"dockerBuildStage":  dockerBuildStage,
 		"publishDirectory":  publishDirectory,
+		"herokuVersion":     "",
+		"railpackVersion":   "",
 	}
 
 	_, err := c.doRequest("POST", "application.saveBuildType", payload)
@@ -1218,8 +1260,13 @@ func (c *DokployClient) SaveGithubProvider(input SaveGithubProviderInput) error 
 	if input.Branch != "" {
 		payload["branch"] = input.Branch
 	}
+	// buildPath is nonoptional in recent Dokploy Zod schemas, so always
+	// include it. Default to "/" when unset -- matches the UI's behaviour
+	// for an app without a custom build path.
 	if input.BuildPath != "" {
 		payload["buildPath"] = input.BuildPath
+	} else {
+		payload["buildPath"] = "/"
 	}
 	if len(input.WatchPaths) > 0 {
 		payload["watchPaths"] = input.WatchPaths
