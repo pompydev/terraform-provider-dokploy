@@ -17,18 +17,18 @@ depends = ["fmt", "spell", "lint", "install", "generate"]
 alias = "vv"
 
 [tasks.build]
-run = "GOFLAGS= go build -v ./..."
+run = "go build -v ./..."
 
 [tasks.install]
 depends = ["build"]
-run = "GOFLAGS= go install -v ./..."
+run = "go install -v ./..."
 
 [tasks.lint]
-run = "GOFLAGS= golangci-lint run"
+run = "golangci-lint run"
 
 [tasks.generate]
 dir = "{{config_root}}/tools"
-run = "GOFLAGS= go generate ./..."
+run = "go generate ./..."
 
 [tasks.fmt]
 run = '''
@@ -40,8 +40,8 @@ prettier --write .
 run = "cspell ."
 
 [tasks.test]
-run = "GOFLAGS= go test -v -cover -timeout=120s -parallel=10 ./..."
+run = "go test -v -cover -timeout=120s -parallel=10 ./..."
 
 [tasks.test-acceptance]
 env = { TF_ACC = "1" }
-run = "GOFLAGS= go test -v -cover -timeout 120m ./..."
+run = "go test -v -cover -timeout 120m ./..."
