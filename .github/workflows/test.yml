@@ -30,8 +30,6 @@ jobs:
           version: 2026.6.11
           experimental: true # required for mise nix plugin
       - run: mise verify
-        env:
-          GOFLAGS: ""
       - name: git diff
         run: |
           git diff --compact-summary --exit-code || \

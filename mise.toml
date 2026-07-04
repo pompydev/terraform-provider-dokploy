@@ -12,6 +12,9 @@ node = "26.4.0" # required by npm backend (e.g. prettier)
 [plugins]
 nix = "https://github.com/jbadeau/mise-nix"
 
+[env]
+GOFLAGS = ""
+
 [tasks.verify]
 depends = ["fmt", "spell", "lint", "install", "generate"]
 alias = "vv"
