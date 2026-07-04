@@ -28,6 +28,7 @@ run = "golangci-lint run"
 
 [tasks.generate]
 dir = "{{config_root}}/tools"
+env = { GOFLAGS = "" }
 run = "go generate ./..."
 
 [tasks.fmt]
