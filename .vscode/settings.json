@@ -13,9 +13,13 @@
     "ahmedali6",
     "Dokploy",
     "ghaction",
+    "goarch",
+    "gofmt",
     "golangci",
     "gomod",
     "gopls",
-    "goreleaser"
+    "goreleaser",
+    "ldflags",
+    "trimpath"
   ]
 }

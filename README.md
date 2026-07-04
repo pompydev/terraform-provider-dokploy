@@ -5,6 +5,7 @@ This is a Terraform provider for [Dokploy](https://dokploy.com/), allowing you t
 ## Features
 
 ### Resources
+
 - **Projects** - Organize your infrastructure
 - **Environments** - Manage deployment environments (staging, production, etc.)
 - **Applications** - Deploy applications from Git (GitHub, custom Git, etc.)
@@ -19,6 +20,7 @@ This is a Terraform provider for [Dokploy](https://dokploy.com/), allowing you t
 - **Registry** - Configure Docker registry credentials
 
 ### Data Sources
+
 - **GitHub Providers** - Query configured GitHub integrations
 - **Servers** - Retrieve information about Dokploy servers
 
@@ -90,12 +92,14 @@ For more examples, see the [examples](./examples/) directory and [documentation]
 ## Building The Provider
 
 1. Clone the repository:
+
 ```shell
 git clone https://github.com/ahmedali6/terraform-provider-dokploy.git
 cd terraform-provider-dokploy
 ```
 
 2. Build the provider:
+
 ```shell
 go build .
 ```
@@ -103,6 +107,7 @@ go build .
 ## Documentation
 
 Full documentation is available in the [docs](./docs/) folder, including:
+
 - Resource schemas and examples
 - Data source references
 - Import instructions
@@ -120,11 +125,13 @@ If you wish to work on the provider, you'll first need [Go](http://www.golang.or
 ### Local Development
 
 1. Build and install locally:
+
 ```shell
 go install
 ```
 
 2. Configure Terraform to use your local build:
+
 ```shell
 # Create or edit ~/.terraformrc
 cat > ~/.terraformrc << EOF
