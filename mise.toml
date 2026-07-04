@@ -8,6 +8,9 @@ prettier = "3.9.4"
 # indirect dependencies
 node = "26.4.0" # required by npm backend (e.g. prettier)
 
+[plugins]
+nix = "https://github.com/jbadeau/mise-nix"
+
 [tasks.verify]
 depends = ["fmt", "lint", "install", "generate"]
 alias = "vv"
