@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     dokploy = {
-      source = "ahmedali6/dokploy"
+      source = "pompydev/dokploy"
     }
     tls = {
       source  = "hashicorp/tls"

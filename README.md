@@ -40,7 +40,7 @@ Add the provider to your Terraform configuration:
 terraform {
   required_providers {
     dokploy = {
-      source  = "ahmedali6/dokploy"
+      source  = "pompydev/dokploy"
       version = "~> 0.1"
     }
   }
@@ -94,7 +94,7 @@ For more examples, see the [examples](./examples/) directory and [documentation]
 1. Clone the repository:
 
 ```shell
-git clone https://github.com/ahmedali6/terraform-provider-dokploy.git
+git clone https://github.com/pompydev/terraform-provider-dokploy.git
 cd terraform-provider-dokploy
 ```
 
@@ -137,7 +137,7 @@ go install
 cat > ~/.terraformrc << EOF
 provider_installation {
   dev_overrides {
-    "ahmedali6/dokploy" = "/path/to/your/go/bin"
+    "pompydev/dokploy" = "/path/to/your/go/bin"
   }
   direct {}
 }

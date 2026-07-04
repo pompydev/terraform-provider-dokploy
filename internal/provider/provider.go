@@ -3,13 +3,13 @@ package provider
 import (
 	"context"
 
-	"github.com/ahmedali6/terraform-provider-dokploy/internal/client"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/pompydev/terraform-provider-dokploy/internal/client"
 )
 
 var _ provider.Provider = &DokployProvider{}

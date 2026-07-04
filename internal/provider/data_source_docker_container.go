@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ahmedali6/terraform-provider-dokploy/internal/client"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/pompydev/terraform-provider-dokploy/internal/client"
 )
 
 var _ datasource.DataSource = &DockerContainerDataSource{}

@@ -5,7 +5,6 @@ ignorePaths:
   - go.sum
   - go.mod
 words:
-  - ahmedali6
   - behaviour
   - booldefault
   - boolplanmodifier
@@ -49,6 +48,7 @@ words:
   - nonoptional
   - paketo
   - planmodifier
+  - pompydev
   - providerserver
   - railpack
   - Railpack
