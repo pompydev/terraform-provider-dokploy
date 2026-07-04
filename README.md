@@ -27,7 +27,6 @@ This is a Terraform provider for [Dokploy](https://dokploy.com/), allowing you t
 ## Requirements
 
 - [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.0
-- [Go](https://golang.org/doc/install) >= 1.24 (for development)
 - A [Dokploy](https://dokploy.com/) instance with API access
 
 ## Using the Provider
@@ -91,18 +90,19 @@ For more examples, see the [examples](./examples/) directory and [documentation]
 
 ## Building The Provider
 
-1. Clone the repository:
+1. [Install mise](https://mise.jdx.dev/installing-mise.html).
 
-```shell
-git clone https://github.com/pompydev/terraform-provider-dokploy.git
-cd terraform-provider-dokploy
-```
+2. Clone the repository.
 
-2. Build the provider:
+   ```shell
+   git clone https://github.com/pompydev/terraform-provider-dokploy.git
+   cd terraform-provider-dokploy
+   ```
 
-```shell
-go build .
-```
+3. Build the provider.
+   ```shell
+   go build .
+   ```
 
 ## Documentation
 
