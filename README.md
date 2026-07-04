@@ -110,7 +110,7 @@ Full documentation is available in the [docs](./docs/) folder, including:
 To generate documentation:
 
 ```shell
-make generate
+mise run generate
 ```
 
 ## Developing the Provider

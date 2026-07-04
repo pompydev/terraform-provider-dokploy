@@ -1,0 +1,33 @@
+[tools]
+go = "1.26.4"
+golangci-lint = "2.12.2"
+"nix:gopls" = "0.22.0"
+terraform = "1.15.7"
+
+[tasks.verify]
+depends = ["fmt", "lint", "install", "generate"]
+alias = "vv"
+
+[tasks.build]
+run = "go build -v ./..."
+
+[tasks.install]
+depends = ["build"]
+run = "go install -v ./..."
+
+[tasks.lint]
+run = "golangci-lint run"
+
+[tasks.generate]
+dir = "{{config_root}}/tools"
+run = "go generate ./..."
+
+[tasks.fmt]
+run = "gofmt -s -w -e ."
+
+[tasks.test]
+run = "go test -v -cover -timeout=120s -parallel=10 ./..."
+
+[tasks.test-acceptance]
+env = { TF_ACC = "1" }
+run = "go test -v -cover -timeout 120m ./..."
