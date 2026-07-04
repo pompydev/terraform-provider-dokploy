@@ -1,9 +1,10 @@
 [tools]
+"nix:gopls" = "0.22.0"
+cspell = "10.0.1"
 go = "1.26.4"
 golangci-lint = "2.12.2"
-"nix:gopls" = "0.22.0"
-terraform = "1.15.7"
 prettier = "3.9.4"
+terraform = "1.15.7"
 
 # indirect dependencies
 node = "26.4.0" # required by npm backend (e.g. prettier)
@@ -12,7 +13,7 @@ node = "26.4.0" # required by npm backend (e.g. prettier)
 nix = "https://github.com/jbadeau/mise-nix"
 
 [tasks.verify]
-depends = ["fmt", "lint", "install", "generate"]
+depends = ["fmt", "spell", "lint", "install", "generate"]
 alias = "vv"
 
 [tasks.build]
@@ -34,6 +35,9 @@ run = '''
 gofmt -s -w -e .
 prettier --write .
 '''
+
+[tasks.spell]
+run = "cspell ."
 
 [tasks.test]
 run = "go test -v -cover -timeout=120s -parallel=10 ./..."

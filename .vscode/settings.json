@@ -1,5 +1,7 @@
 {
   "editor.formatOnSave": true,
+  "editor.rulers": [80],
+  "cSpell.import": ["${workspaceFolder}/cspell.yaml"],
 
   "[go]": {
     "editor.defaultFormatter": "golang.go"
@@ -8,19 +10,14 @@
   "[markdown][json][jsonc][yaml][github-actions-workflow]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-
-  "cSpell.words": [
-    "ahmedali6",
-    "cachix",
-    "Dokploy",
-    "ghaction",
-    "goarch",
-    "gofmt",
-    "golangci",
-    "gomod",
-    "gopls",
-    "goreleaser",
-    "ldflags",
-    "trimpath"
-  ]
+  "[dockercompose]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.autoIndent": "advanced"
+  },
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform"
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  }
 }

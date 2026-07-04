@@ -3,6 +3,9 @@
     "esbenp.prettier-vscode",
     "github.vscode-github-actions",
     "golang.go",
-    "hverlin.mise-vscode"
+    "hashicorp.terraform",
+    "hverlin.mise-vscode",
+    "streetsidesoftware.code-spell-checker",
+    "tamasfe.even-better-toml"
   ]
 }
