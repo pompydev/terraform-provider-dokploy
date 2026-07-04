@@ -5,7 +5,7 @@
     "editor.defaultFormatter": "golang.go"
   },
 
-  "[markdown][json][jsonc][yaml]": {
+  "[markdown][json][jsonc][yaml][github-actions-workflow]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
 

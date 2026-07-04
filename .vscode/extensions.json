@@ -1,7 +1,8 @@
 {
-    "recommendations": [
-        "esbenp.prettier-vscode",
-        "golang.go",
-        "hverlin.mise-vscode"
-    ]
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "github.vscode-github-actions",
+    "golang.go",
+    "hverlin.mise-vscode"
+  ]
 }
