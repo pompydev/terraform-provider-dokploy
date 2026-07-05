@@ -682,7 +682,11 @@ func (r *ApplicationResource) Schema(_ context.Context, _ resource.SchemaRequest
 			// Traefik configuration
 			"traefik_config": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Custom Traefik configuration for the application. This allows you to define custom routing rules, middleware, and other Traefik-specific settings.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 		},
 	}
@@ -777,14 +781,16 @@ func (r *ApplicationResource) Create(ctx context.Context, req resource.CreateReq
 	// Update plan with values from the API
 	updatePlanFromApplication(&plan, finalApp)
 
-	// Read traefik config if it was set
-	if !plan.TraefikConfig.IsNull() && !plan.TraefikConfig.IsUnknown() {
-		traefikConfig, err := r.client.ReadTraefikConfig(createdApp.ID)
-		if err != nil {
-			resp.Diagnostics.AddWarning("Error reading Traefik config", err.Error())
-		} else if traefikConfig != "" {
-			plan.TraefikConfig = types.StringValue(traefikConfig)
-		}
+	// Read traefik config separately (not part of application response).
+	// Plan may be Unknown when the user omitted the attribute, so always read
+	// back from the API to populate state correctly.
+	traefikConfig, err := r.client.ReadTraefikConfig(createdApp.ID)
+	if err != nil {
+		resp.Diagnostics.AddWarning("Error reading Traefik config", err.Error())
+	} else if traefikConfig != "" {
+		plan.TraefikConfig = types.StringValue(traefikConfig)
+	} else {
+		plan.TraefikConfig = types.StringNull()
 	}
 
 	// 8. Deploy if requested
@@ -885,14 +891,19 @@ func (r *ApplicationResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	// 5. Update Traefik config if provided
+	// 5. Update Traefik config if it changed.
+	// With Computed + UseStateForUnknown, an omitted attribute inherits the
+	// prior state value, so we only call the API when the value actually
+	// differs from state.
 	if !plan.TraefikConfig.IsNull() && !plan.TraefikConfig.IsUnknown() {
-		if err := r.client.UpdateTraefikConfig(appID, plan.TraefikConfig.ValueString()); err != nil {
-			resp.Diagnostics.AddError("Error updating Traefik config", err.Error())
-			return
+		if plan.TraefikConfig.ValueString() != state.TraefikConfig.ValueString() {
+			if err := r.client.UpdateTraefikConfig(appID, plan.TraefikConfig.ValueString()); err != nil {
+				resp.Diagnostics.AddError("Error updating Traefik config", err.Error())
+				return
+			}
 		}
-	} else if !state.TraefikConfig.IsNull() && (plan.TraefikConfig.IsNull() || plan.TraefikConfig.ValueString() == "") {
-		// Clear traefik config if it was set before but is now empty/null
+	} else if !state.TraefikConfig.IsNull() && plan.TraefikConfig.IsNull() {
+		// Explicit null clears a previously set traefik config.
 		if err := r.client.UpdateTraefikConfig(appID, ""); err != nil {
 			resp.Diagnostics.AddError("Error clearing Traefik config", err.Error())
 			return
