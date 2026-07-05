@@ -970,6 +970,7 @@ func (c *DokployClient) UpdateApplicationGeneral(app Application) (*Application,
 
 	// Boolean fields - always include
 	payload["autoDeploy"] = app.AutoDeploy
+	payload["enabled"] = app.Enabled
 
 	// Numeric fields
 	if app.Replicas > 0 {
@@ -1201,6 +1202,8 @@ func (c *DokployClient) SaveGitProvider(input SaveGitProviderInput) error {
 	}
 	if input.CustomGitBuildPath != "" {
 		payload["customGitBuildPath"] = input.CustomGitBuildPath
+	} else {
+		payload["customGitBuildPath"] = "/"
 	}
 	if input.CustomGitUrl != "" {
 		payload["customGitUrl"] = input.CustomGitUrl
@@ -1211,8 +1214,9 @@ func (c *DokployClient) SaveGitProvider(input SaveGitProviderInput) error {
 	if input.EnableSubmodules {
 		payload["enableSubmodules"] = input.EnableSubmodules
 	}
-	if len(input.WatchPaths) > 0 {
-		payload["watchPaths"] = input.WatchPaths
+	payload["watchPaths"] = input.WatchPaths
+	if input.WatchPaths == nil {
+		payload["watchPaths"] = []string{}
 	}
 
 	_, err := c.doRequest("POST", "application.saveGitProvider", payload)
