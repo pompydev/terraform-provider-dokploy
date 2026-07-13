@@ -16,7 +16,7 @@ nix = "https://github.com/jbadeau/mise-nix"
 GOFLAGS = ""
 
 [tasks.verify]
-depends = ["fmt", "spell", "lint", "install", "generate"]
+depends = ["fmt", "spell", "lint", "generate"]
 alias = "vv"
 
 [tasks.out]
