@@ -35,7 +35,7 @@ resource "dokploy_domain" "myapp" {
 - `host` (String)
 - `https` (Boolean) Enable HTTPS for the domain.
 - `middlewares` (List of String) Traefik middleware names applied to the domain, in order.
-- `path` (String)
+- `path` (String) Path prefix for domain routing. Defaults to `/` when omitted.
 - `port` (Number)
 - `redeploy_on_update` (Boolean) If true, triggers a redeploy of the associated application or compose stack when the domain is created or updated.
 - `service_name` (String)

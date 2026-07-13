@@ -2555,10 +2555,15 @@ func (c *DokployClient) GenerateDomain(appName string) (string, error) {
 }
 
 func (c *DokployClient) UpdateDomain(domain Domain) (*Domain, error) {
+	path := domain.Path
+	if path == "" {
+		path = "/"
+	}
+
 	payload := map[string]interface{}{
 		"domainId":    domain.ID,
 		"host":        domain.Host,
-		"path":        domain.Path,
+		"path":        path,
 		"port":        domain.Port,
 		"https":       domain.HTTPS,
 		"serviceName": domain.ServiceName,

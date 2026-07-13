@@ -53,6 +53,23 @@ func TestDomainMiddlewarePayload(t *testing.T) {
 			},
 		},
 		{
+			name:     "update defaults empty path",
+			endpoint: "/domain.update",
+			middlewares: []string{
+				"auth@file",
+				"compress@file",
+			},
+			request: func(client *DokployClient) (*Domain, error) {
+				return client.UpdateDomain(Domain{
+					ID:          "domain-id",
+					Host:        "example.com",
+					Port:        3000,
+					HTTPS:       true,
+					Middlewares: []string{"auth@file", "compress@file"},
+				})
+			},
+		},
+		{
 			name:        "clear",
 			endpoint:    "/domain.update",
 			middlewares: []string{},
@@ -86,6 +103,9 @@ func TestDomainMiddlewarePayload(t *testing.T) {
 				}
 				if got := payload["middlewares"]; !reflect.DeepEqual(got, want) {
 					t.Errorf("middlewares = %#v, want %#v", got, want)
+				}
+				if got, want := payload["path"], "/"; got != want {
+					t.Errorf("path = %#v, want %#v", got, want)
 				}
 
 				if err := json.NewEncoder(w).Encode(map[string]any{

@@ -78,8 +78,9 @@ func (r *DomainResource) Schema(_ context.Context, _ resource.SchemaRequest, res
 				},
 			},
 			"path": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
+				Optional:    true,
+				Computed:    true,
+				Description: "Path prefix for domain routing. Defaults to `/` when omitted.",
 			},
 			"port": schema.Int64Attribute{
 				Optional: true,
