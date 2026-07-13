@@ -20,15 +20,18 @@ depends = ["fmt", "spell", "lint", "install", "generate"]
 alias = "vv"
 
 [tasks.out]
-run = "go build -o terraform-provider-dokploy ."
+run = '''
+go build -trimpath -ldflags="-s -w -X main.version=0.7.0" -o terraform-provider-dokploy .
+'''
 alias = "o"
+
+[tasks.install]
+depends = ["out"]
+run = "cp terraform-provider-dokploy ~/.terraform.d/plugins/registry.terraform.io/ahmedali6/dokploy/0.7.0/linux_amd64/terraform-provider-dokploy_v0.7.0_x5"
+alias = "ii"
 
 [tasks.build]
 run = "go build -v ./..."
-
-[tasks.install]
-depends = ["build"]
-run = "go install -v ./..."
 
 [tasks.lint]
 run = "golangci-lint run"
