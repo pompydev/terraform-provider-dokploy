@@ -2447,15 +2447,16 @@ func (c *DokployClient) DeleteDatabaseWithType(id, dbType string) error {
 // --- Domain ---
 
 type Domain struct {
-	ID              string `json:"domainId"`
-	ApplicationID   string `json:"applicationId"`
-	ComposeID       string `json:"composeId"`
-	ServiceName     string `json:"serviceName"`
-	Host            string `json:"host"`
-	Path            string `json:"path"`
-	Port            int64  `json:"port"`
-	HTTPS           bool   `json:"https"`
-	CertificateType string `json:"certificateType"`
+	ID              string   `json:"domainId"`
+	ApplicationID   string   `json:"applicationId"`
+	ComposeID       string   `json:"composeId"`
+	ServiceName     string   `json:"serviceName"`
+	Host            string   `json:"host"`
+	Path            string   `json:"path"`
+	Port            int64    `json:"port"`
+	HTTPS           bool     `json:"https"`
+	CertificateType string   `json:"certificateType"`
+	Middlewares     []string `json:"middlewares"`
 }
 
 func (c *DokployClient) CreateDomain(domain Domain) (*Domain, error) {
@@ -2483,6 +2484,9 @@ func (c *DokployClient) CreateDomain(domain Domain) (*Domain, error) {
 	}
 	if domain.ServiceName != "" {
 		payload["serviceName"] = domain.ServiceName
+	}
+	if domain.Middlewares != nil {
+		payload["middlewares"] = domain.Middlewares
 	}
 
 	resp, err := c.doRequest("POST", "domain.create", payload)
@@ -2558,6 +2562,9 @@ func (c *DokployClient) UpdateDomain(domain Domain) (*Domain, error) {
 		"port":        domain.Port,
 		"https":       domain.HTTPS,
 		"serviceName": domain.ServiceName,
+	}
+	if domain.Middlewares != nil {
+		payload["middlewares"] = domain.Middlewares
 	}
 	// Set certificate type based on HTTPS setting
 	if domain.HTTPS {

@@ -34,6 +34,7 @@ resource "dokploy_domain" "myapp" {
 - `generate_traefik_me` (Boolean) If true, generates a traefik.me domain for the application.
 - `host` (String)
 - `https` (Boolean) Enable HTTPS for the domain.
+- `middlewares` (List of String) Traefik middleware names applied to the domain, in order.
 - `path` (String)
 - `port` (Number)
 - `redeploy_on_update` (Boolean) If true, triggers a redeploy of the associated application or compose stack when the domain is created or updated.

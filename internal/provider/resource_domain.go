@@ -35,6 +35,7 @@ type DomainResourceModel struct {
 	Port              types.Int64  `tfsdk:"port"`
 	HTTPS             types.Bool   `tfsdk:"https"`
 	CertificateType   types.String `tfsdk:"certificate_type"`
+	Middlewares       types.List   `tfsdk:"middlewares"`
 	GenerateTraefikMe types.Bool   `tfsdk:"generate_traefik_me"`
 	RedeployOnUpdate  types.Bool   `tfsdk:"redeploy_on_update"`
 }
@@ -93,6 +94,12 @@ func (r *DomainResource) Schema(_ context.Context, _ resource.SchemaRequest, res
 				Optional:    true,
 				Computed:    true,
 				Description: "Certificate type: 'none', 'letsencrypt'. Defaults to 'letsencrypt' when https is true.",
+			},
+			"middlewares": schema.ListAttribute{
+				Optional:    true,
+				Computed:    true,
+				ElementType: types.StringType,
+				Description: "Traefik middleware names applied to the domain, in order.",
 			},
 			"generate_traefik_me": schema.BoolAttribute{
 				Optional:    true,
@@ -173,6 +180,15 @@ func (r *DomainResource) Create(ctx context.Context, req resource.CreateRequest,
 	if plan.HTTPS.IsUnknown() || plan.HTTPS.IsNull() {
 		plan.HTTPS = types.BoolValue(true)
 	}
+	var middlewares []string
+	if !plan.Middlewares.IsNull() && !plan.Middlewares.IsUnknown() {
+		middlewares = []string{}
+		diags = plan.Middlewares.ElementsAs(ctx, &middlewares, false)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+	}
 
 	domain := client.Domain{
 		ApplicationID:   plan.ApplicationID.ValueString(),
@@ -183,6 +199,7 @@ func (r *DomainResource) Create(ctx context.Context, req resource.CreateRequest,
 		Port:            plan.Port.ValueInt64(),
 		HTTPS:           plan.HTTPS.ValueBool(),
 		CertificateType: plan.CertificateType.ValueString(),
+		Middlewares:     middlewares,
 	}
 
 	createdDomain, err := r.client.CreateDomain(domain)
@@ -194,6 +211,11 @@ func (r *DomainResource) Create(ctx context.Context, req resource.CreateRequest,
 	plan.ID = types.StringValue(createdDomain.ID)
 	plan.ServiceName = types.StringValue(createdDomain.ServiceName)
 	plan.CertificateType = types.StringValue(createdDomain.CertificateType)
+	plan.Middlewares, diags = types.ListValueFrom(ctx, types.StringType, createdDomain.Middlewares)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Trigger Redeploy if requested
 	if !plan.RedeployOnUpdate.IsNull() && plan.RedeployOnUpdate.ValueBool() {
@@ -242,6 +264,11 @@ func (r *DomainResource) Read(ctx context.Context, req resource.ReadRequest, res
 			state.HTTPS = types.BoolValue(d.HTTPS)
 			state.ServiceName = types.StringValue(d.ServiceName)
 			state.CertificateType = types.StringValue(d.CertificateType)
+			state.Middlewares, diags = types.ListValueFrom(ctx, types.StringType, d.Middlewares)
+			resp.Diagnostics.Append(diags...)
+			if resp.Diagnostics.HasError() {
+				return
+			}
 			if d.ApplicationID != "" {
 				state.ApplicationID = types.StringValue(d.ApplicationID)
 			}
@@ -270,6 +297,16 @@ func (r *DomainResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
+	var middlewares []string
+	if !plan.Middlewares.IsNull() && !plan.Middlewares.IsUnknown() {
+		middlewares = []string{}
+		diags = plan.Middlewares.ElementsAs(ctx, &middlewares, false)
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+	}
+
 	domain := client.Domain{
 		ID:              plan.ID.ValueString(),
 		ApplicationID:   plan.ApplicationID.ValueString(),
@@ -280,6 +317,7 @@ func (r *DomainResource) Update(ctx context.Context, req resource.UpdateRequest,
 		Port:            plan.Port.ValueInt64(),
 		HTTPS:           plan.HTTPS.ValueBool(),
 		CertificateType: plan.CertificateType.ValueString(),
+		Middlewares:     middlewares,
 	}
 
 	updatedDomain, err := r.client.UpdateDomain(domain)
@@ -294,6 +332,11 @@ func (r *DomainResource) Update(ctx context.Context, req resource.UpdateRequest,
 	plan.HTTPS = types.BoolValue(updatedDomain.HTTPS)
 	plan.ServiceName = types.StringValue(updatedDomain.ServiceName)
 	plan.CertificateType = types.StringValue(updatedDomain.CertificateType)
+	plan.Middlewares, diags = types.ListValueFrom(ctx, types.StringType, updatedDomain.Middlewares)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Trigger Redeploy if requested
 	if !plan.RedeployOnUpdate.IsNull() && plan.RedeployOnUpdate.ValueBool() {
