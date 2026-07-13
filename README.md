@@ -1,171 +1,47 @@
 # Terraform Provider for Dokploy
 
-This is a Terraform provider for [Dokploy](https://dokploy.com/), allowing you to manage Dokploy resources such as projects, applications, databases, and more using Infrastructure as Code.
+This is my personal fork of [ahmedali6/terraform-provider-dokploy][upstream]
+(hint: you can read the original README there) created to fix some bugs and
+add some features. I do not plan on maintaining it so it is not published to
+terraform registry. I honestly wouldn't recommend using it but installation
+instruction is provided regardless.
 
-## Features
+## Installation
 
-### Resources
+Not using the `.tfrc` method because vscode LSP can't pick up new properties.
 
-- **Projects** - Organize your infrastructure
-- **Environments** - Manage deployment environments (staging, production, etc.)
-- **Applications** - Deploy applications from Git (GitHub, custom Git, etc.)
-- **Databases** - Provision databases (PostgreSQL, MySQL, MongoDB, MariaDB, Redis)
-- **Compose** - Deploy Docker Compose stacks
-- **Domains** - Configure domains and routing
-- **Environment Variables** - Manage application configuration
-- **SSH Keys** - Handle Git repository authentication
-- **Mounts** - Configure volume, bind, and file mounts
-- **Ports** - Manage port mappings for non-HTTP services
-- **Redirects** - Set up URL redirects and rewrites
-- **Registry** - Configure Docker registry credentials
-
-### Data Sources
-
-- **GitHub Providers** - Query configured GitHub integrations
-- **Servers** - Retrieve information about Dokploy servers
-
-## Requirements
-
-- [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.0
-- A [Dokploy](https://dokploy.com/) instance with API access
-
-## Using the Provider
-
-### Installation
-
-Add the provider to your Terraform configuration:
-
-```hcl
-terraform {
-  required_providers {
-    dokploy = {
-      source  = "pompydev/dokploy"
-      version = "~> 0.1"
-    }
-  }
-}
-
-provider "dokploy" {
-  host    = "https://your-dokploy-instance.com/api"
-  api_key = var.dokploy_api_key  # Store securely!
-}
-```
-
-### Quick Example
-
-```hcl
-# Create a project
-resource "dokploy_project" "main" {
-  name        = "my-project"
-  description = "My application infrastructure"
-}
-
-# Create an environment
-resource "dokploy_environment" "production" {
-  name       = "production"
-  project_id = dokploy_project.main.id
-}
-
-# Deploy an application
-resource "dokploy_application" "web" {
-  name               = "web-app"
-  project_id         = dokploy_project.main.id
-  environment_id     = dokploy_environment.production.id
-  custom_git_url     = "https://github.com/username/repo.git"
-  custom_git_branch  = "main"
-  build_type         = "dockerfile"
-  auto_deploy        = true
-}
-
-# Configure a domain
-resource "dokploy_domain" "web_domain" {
-  application_id      = dokploy_application.web.id
-  generate_traefik_me = true
-  port                = 3000
-  https               = true
-}
-```
-
-For more examples, see the [examples](./examples/) directory and [documentation](./docs/).
-
-## Building The Provider
-
-1. [Install mise](https://mise.jdx.dev/installing-mise.html).
-
-2. Clone the repository.
+1. Build
 
    ```shell
-   git clone https://github.com/pompydev/terraform-provider-dokploy.git
-   cd terraform-provider-dokploy
+   go build -trimpath -ldflags="-s -w -X main.version=0.7.0" -o terraform-provider-dokploy .
    ```
 
-3. Build the provider.
+2. Move binary
+
    ```shell
-   go build .
+   cp terraform-provider-dokploy ~/.terraform.d/plugins/registry.terraform.io/ahmedali6/dokploy/0.7.0/linux_amd64/terraform-provider-dokploy_v0.7.0_x5
    ```
 
-## Documentation
+3. Update `~/.terraformrc` (replace `HOME_DIRECTORY_ABSOLUTE_PATH` with `/home/whatever`)
 
-Full documentation is available in the [docs](./docs/) folder, including:
+   ```
+   provider_installation {
+     filesystem_mirror {
+       path    = "HOME_DIRECTORY_ABSOLUTE_PATH/.terraform.d/plugins"
+       include = ["registry.terraform.io/ahmedali6/dokploy"]
+     }
 
-- Resource schemas and examples
-- Data source references
-- Import instructions
+     # For all other providers, install them directly from their origin provider
+     # registries as normal.
+     direct {
+       exclude = ["registry.terraform.io/ahmedali6/dokploy"]
+     }
+   }
+   ```
 
-To generate documentation:
+4. Update `.terraform.lock.hcl` (run it from your terraform project)
+   ```shell
+   terraform providers lock -fs-mirror="$HOME/.terraform.d/plugins" registry.terraform.io/ahmedali6/dokploy
+   ```
 
-```shell
-mise run generate
-```
-
-## Developing the Provider
-
-If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine.
-
-### Local Development
-
-1. Build and install locally:
-
-```shell
-go install
-```
-
-2. Configure Terraform to use your local build:
-
-```shell
-# Create or edit ~/.terraformrc
-cat > ~/.terraformrc << EOF
-provider_installation {
-  dev_overrides {
-    "pompydev/dokploy" = "/path/to/your/go/bin"
-  }
-  direct {}
-}
-EOF
-```
-
-### Running Tests
-
-First, create a `.env` file from the template:
-
-```shell
-cp .env.example .env
-# Edit .env and set:
-# - DOKPLOY_HOST=https://your-instance.com/api
-# - DOKPLOY_API_KEY=your-api-key
-# - TF_ACC=1
-```
-
-Run the tests:
-
-```shell
-go test -v ./...
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This provider is published under the same license as the original project.
+[upstream]: https://github.com/ahmedali6/terraform-provider-dokploy
