@@ -19,6 +19,10 @@ GOFLAGS = ""
 depends = ["fmt", "spell", "lint", "install", "generate"]
 alias = "vv"
 
+[tasks.out]
+run = "go build -o terraform-provider-dokploy ."
+alias = "o"
+
 [tasks.build]
 run = "go build -v ./..."
 
