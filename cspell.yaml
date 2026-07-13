@@ -5,6 +5,7 @@ ignorePaths:
   - go.sum
   - go.mod
 words:
+  - ahmedali6
   - behaviour
   - booldefault
   - boolplanmodifier
