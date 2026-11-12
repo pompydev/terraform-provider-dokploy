@@ -20,8 +20,11 @@ depends = ["fmt", "spell", "lint", "generate"]
 alias = "vv"
 
 [tasks.out]
+# Reproducible build so the h1: hash in .terraform.lock.hcl stays stable across rebuilds and machines:
+# - CGO_ENABLED=0: mise's Go sets CGO_ENABLED=1, which links against the Nix glibc store path
+# - -buildvcs=false: don't embed the git revision or dirty state
 run = '''
-go build -trimpath -ldflags="-s -w -X main.version=0.7.0" -o terraform-provider-dokploy .
+env CGO_ENABLED=0 go build -trimpath -buildvcs=false -ldflags="-s -w -X main.version=0.7.0" -o terraform-provider-dokploy .
 '''
 alias = "o"
 

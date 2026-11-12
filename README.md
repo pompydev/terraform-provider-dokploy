@@ -13,8 +13,12 @@ Not using the `.tfrc` method because vscode LSP can't pick up new properties.
 1. Build
 
    ```shell
-   go build -trimpath -ldflags="-s -w -X main.version=0.7.0" -o terraform-provider-dokploy .
+   CGO_ENABLED=0 go build -trimpath -buildvcs=false -ldflags="-s -w -X main.version=0.7.0" -o terraform-provider-dokploy .
    ```
+
+   `CGO_ENABLED=0` and `-buildvcs=false` make the build reproducible, so the
+   `h1:` hash in `.terraform.lock.hcl` stays the same across rebuilds and
+   machines.
 
 2. Move binary
 
