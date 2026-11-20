@@ -2629,12 +2629,15 @@ func (c *DokployClient) UpdateApplicationEnv(appID string, updateFn func(envMap 
 			return nil // No changes to be made
 		}
 
+		// application.saveEnvironment requires every field and overwrites all
+		// of them, so send back the current values of the fields this function
+		// doesn't manage. Otherwise build args and build secrets get wiped.
 		payload := map[string]interface{}{
 			"applicationId": appID,
 			"env":           newEnvStr,
-			"buildArgs":     "",
-			"buildSecrets":  "",
-			"createEnvFile": false,
+			"buildArgs":     app.BuildArgs,
+			"buildSecrets":  app.BuildSecrets,
+			"createEnvFile": app.CreateEnvFile,
 		}
 		if createEnvFile != nil {
 			payload["createEnvFile"] = *createEnvFile

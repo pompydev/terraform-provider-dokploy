@@ -1262,14 +1262,37 @@ func (r *ApplicationResource) saveEnvironment(appID string, plan *ApplicationRes
 		return nil
 	}
 
-	createEnvFile := plan.CreateEnvFile.ValueBool()
+	// application.saveEnvironment requires every field and overwrites all of
+	// them, so fields not managed by Terraform must be sent with their current
+	// values. Otherwise e.g. setting only create_env_file wipes env vars that
+	// were configured in the Dokploy UI.
+	current, err := r.client.GetApplication(appID)
+	if err != nil {
+		return fmt.Errorf("failed to read current environment settings: %w", err)
+	}
+
 	input := client.SaveEnvironmentInput{
 		ApplicationID: appID,
-		Env:           plan.Env.ValueString(),
-		BuildArgs:     plan.BuildArgs.ValueString(),
-		BuildSecrets:  plan.BuildSecrets.ValueString(),
-		CreateEnvFile: &createEnvFile,
+		Env:           current.Env,
+		BuildArgs:     current.BuildArgs,
+		BuildSecrets:  current.BuildSecrets,
 	}
+	createEnvFile := current.CreateEnvFile
+
+	if !plan.Env.IsNull() && !plan.Env.IsUnknown() {
+		input.Env = plan.Env.ValueString()
+	}
+	if !plan.BuildArgs.IsNull() && !plan.BuildArgs.IsUnknown() {
+		input.BuildArgs = plan.BuildArgs.ValueString()
+	}
+	if !plan.BuildSecrets.IsNull() && !plan.BuildSecrets.IsUnknown() {
+		input.BuildSecrets = plan.BuildSecrets.ValueString()
+	}
+	if !plan.CreateEnvFile.IsNull() && !plan.CreateEnvFile.IsUnknown() {
+		createEnvFile = plan.CreateEnvFile.ValueBool()
+	}
+	input.CreateEnvFile = &createEnvFile
+
 	return r.client.SaveEnvironment(input)
 }
 
