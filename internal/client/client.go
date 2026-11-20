@@ -1159,11 +1159,11 @@ func (c *DokployClient) ListApplicationsByEnvironment(environmentID string) ([]A
 
 // SaveBuildType configures the build type settings for an application.
 // Corresponds to application.saveBuildType endpoint.
-func (c *DokployClient) SaveBuildType(appID string, buildType string, dockerfile string, dockerContextPath string, dockerBuildStage string, publishDirectory string) error {
+func (c *DokployClient) SaveBuildType(appID string, buildType string, dockerfile string, dockerContextPath string, dockerBuildStage string, publishDirectory string, herokuVersion string, railpackVersion string) error {
 	// The API requires all these fields to be present as strings (even if
 	// empty). Recent Dokploy releases tightened the Zod schema so
-	// herokuVersion and railpackVersion are nonoptional; send them as empty
-	// strings (the UI's default for an app that hasn't pinned a version).
+	// herokuVersion and railpackVersion are nonoptional; an empty string is
+	// the UI's default for an app that hasn't pinned a version.
 	payload := map[string]interface{}{
 		"applicationId":     appID,
 		"buildType":         buildType,
@@ -1171,8 +1171,8 @@ func (c *DokployClient) SaveBuildType(appID string, buildType string, dockerfile
 		"dockerContextPath": dockerContextPath,
 		"dockerBuildStage":  dockerBuildStage,
 		"publishDirectory":  publishDirectory,
-		"herokuVersion":     "",
-		"railpackVersion":   "",
+		"herokuVersion":     herokuVersion,
+		"railpackVersion":   railpackVersion,
 	}
 
 	_, err := c.doRequest("POST", "application.saveBuildType", payload)

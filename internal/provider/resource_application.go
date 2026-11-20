@@ -1149,6 +1149,9 @@ func (r *ApplicationResource) saveBuildType(appID string, plan *ApplicationResou
 		plan.DockerContextPath.ValueString(),
 		plan.DockerBuildStage.ValueString(),
 		plan.PublishDirectory.ValueString(),
+		// ValueString returns "" for null/unknown, i.e. "not pinned"
+		plan.HerokuVersion.ValueString(),
+		plan.RailpackVersion.ValueString(),
 	)
 }
 
