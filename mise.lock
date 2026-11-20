@@ -4,7 +4,7 @@ lockfile_version = 3
 
 [[tools.cspell]]
 version = "10.0.1"
-aube = { path = ".mise/locks/cspell/10.0.1", digest = "sha256:7cfe37b514fdbc0e625d7c3efa084fd82bd558819cbbcbd41542f887346879f2" }
+aube = { path = ".mise/locks/cspell/10.0.1", digest = "sha256:2f7431cbd768c39f703939ea9eddcbfee0dc5e609e9d7a943bea26a1e69f2db2" }
 backend = "npm:cspell"
 specifiers = ["10.0.1"]
 
@@ -128,7 +128,7 @@ url = "https://nodejs.org/dist/v26.4.0/node-v26.4.0-win-x64.zip"
 
 [[tools.prettier]]
 version = "3.9.4"
-aube = { path = ".mise/locks/prettier/3.9.4", digest = "sha256:f4010328762aaff6ce538c8a4cf9dd51de1f2cd5c5f7a7be5017774f8c9144a2" }
+aube = { path = ".mise/locks/prettier/3.9.4", digest = "sha256:e9f546304b7dbaf512b48da00762e651a04eee9107e531ad44e80a7961b05bdc" }
 backend = "npm:prettier"
 specifiers = ["3.9.4"]
 
